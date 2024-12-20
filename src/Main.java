@@ -1,68 +1,77 @@
-import java.util.Date;
+import java.util.Scanner;
 
-class Book {
-    String isbn;
-    String title;
-    String author;
-    boolean available;
+public class Main {
+    public static void main(String[] args) {
+        Library library = new Library();
+        Scanner scanner = new Scanner(System.in);
 
-    public Book(String isbn, String title, String author) {
-        this.isbn = isbn;
-        this.title = title;
-        this.author = author;
-        this.available = true;
-    }
+        library.addBook(new Book("123-456-789", "Władca Pierścieni", "J.R.R. Tolkien"));
+        library.addBook(new Book("987-654-321", "Hobbit", "J.R.R. Tolkien"));
+        library.addMember(new Member(1, "Jan Kowalski"));
+        library.addMember(new Member(2, "Anna Nowak"));
 
-    // Gettery i settery (dla uproszczenia pominięte, ale zalecane)
-    public String getIsbn() { return isbn; }
-    public String getTitle() { return title; }
-    public String getAuthor() { return author; }
-    public boolean isAvailable() { return available; }
-    public void setAvailable(boolean available) { this.available = available; }
+        boolean exit = false;
+        while (!exit) {
+            System.out.println("\nMenu Biblioteki:");
+            System.out.println("1. Dodaj książkę");
+            System.out.println("2. Dodaj czytelnika");
+            System.out.println("3. Wypożycz książkę");
+            System.out.println("4. Zwróć książkę");
+            System.out.println("5. Wyświetl dostępne książki");
+            System.out.println("6. Wyświetl wypożyczenia");
+            System.out.println("7. Wyjście");
+            System.out.print("Wybierz opcję: ");
 
-    @Override
-    public String toString() {
-        return "ISBN: " + isbn + ", Tytuł: " + title + ", Autor: " + author + ", Dostępna: " + available;
-    }
-}
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Konsumuj znak nowej linii
 
-class Member {
-    int memberId;
-    String name;
+            switch (choice) {
+                case 1:
+                    System.out.print("Podaj ISBN: ");
+                    String isbn = scanner.nextLine();
+                    System.out.print("Podaj tytuł: ");
+                    String title = scanner.nextLine();
+                    System.out.print("Podaj autora: ");
+                    String author = scanner.nextLine();
+                    library.addBook(new Book(isbn, title, author));
+                    break;
+                case 2:
+                    System.out.print("Podaj ID czytelnika: ");
+                    int memberId = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Podaj imię i nazwisko: ");
+                    String name = scanner.nextLine();
+                    library.addMember(new Member(memberId, name));
+                    break;
+                case 3:
+                    System.out.print("Podaj ISBN książki do wypożyczenia: ");
+                    String isbnToLend = scanner.nextLine();
+                    System.out.print("Podaj ID czytelnika: ");
+                    int memberIdToLend = scanner.nextInt();
+                    scanner.nextLine();
+                    library.lendBook(isbnToLend, memberIdToLend);
+                    break;
+                case 4:
+                    System.out.print("Podaj ID wypożyczenia do zwrotu: ");
+                    int loanIdToReturn = scanner.nextInt();
+                    scanner.nextLine();
+                    library.returnBook(loanIdToReturn);
+                    break;
+                case 5:
+                    library.displayAvailableBooks();
+                    break;
+                case 6:
+                    library.displayLoans();
+                    break;
+                case 7:
+                    exit = true;
+                    System.out.println("Koniec programu.");
+                    break;
+                default:
+                    System.out.println("Nieprawidłowy wybór.");
+            }
+        }
 
-    public Member(int memberId, String name) {
-        this.memberId = memberId;
-        this.name = name;
-    }
-
-    // Gettery i settery
-    public int getMemberId() { return memberId; }
-    public String getName() { return name; }
-
-    @Override
-    public String toString() {
-        return "ID: " + memberId + ", Imię: " + name;
-    }
-}
-
-class Loan {
-    int loanId;
-    Book book;
-    Member member;
-    Date loanDate;
-    Date returnDate;
-
-    public Loan(int loanId, Book book, Member member) {
-        this.loanId = loanId;
-        this.book = book;
-        this.member = member;
-        this.loanDate = new Date(); // Aktualna data
-    }
-
-    public void setReturnDate(Date returnDate) { this.returnDate = returnDate; }
-
-    @Override
-    public String toString() {
-        return "ID wypożyczenia: " + loanId + ", Książka: " + book.getTitle() + ", Czytelnik: " + member.getName() + ", Data wypożyczenia: " + loanDate + ", Data zwrotu: " + returnDate;
+        scanner.close();
     }
 }
